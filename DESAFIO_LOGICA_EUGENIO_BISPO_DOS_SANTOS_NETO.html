@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desafio Ford</title>
+</head>
+<body>
+    <header></header>
+    <main>
+        <div class="box"></div>
+    </main>
+    <footer></footer>
+    <script>
+    /**
+     *  Gera um parágrafo dentro do html
+     *  @param {string} text
+     */
+    function writeLine(text){
+        let element = document.querySelector(".box");
+        let paragraph = document.createElement("p");
+        paragraph.textContent = text;
+        element.appendChild(paragraph);
+    }
+
+    /**
+     * Cria prompt para inserir o valores do tipo number na variável. (Obs: por padrão, o valor atribuido é  em ponto flutuante)
+     * @param {string} text  mensagem exibida.
+     * @param {boolean} option true para valores de ponto flutuante e falso para valores inteiro.
+     * @returns {number} 
+    */
+    function inputValue(text, option = true) {
+        let variable = "";
+        if(option){
+            do {
+                variable = prompt(text);
+                variable = variable.replace(",", ".")
+                showAlerts(variable);
+                isNaN(variable) ? variable = NaN : variable = parseFloat(variable);
+                if (!(variable >= 1 || variable - parseInt(variable) != 0)) variable = NaN;
+            } while(isNaN(variable));
+        }
+        else if (option === false){
+            do {
+                variable = prompt(text);
+                variable = variable.replace(",", ".");
+                showAlerts(variable, true);
+                if (!(variable >= 1 && parseFloat(variable) - parseInt(variable) == 0)) variable = NaN;
+                isNaN(variable) ? variable = NaN : variable = parseInt(variable);
+            } while(isNaN(variable));
+        }
+        else
+            console.error("Valor inválido");
+        return variable;
+    }
+
+    /**
+     * Retorna um alerta caso o valor não esteja no padrão.
+     * @param {number | string} value valor que vai ser validado.
+     * @param {boolean} option verificação para validar números maior que 1 e verifica se é um decimal.
+    */
+    function showAlerts(value, option = false) {
+        if (value === null || value.trim() === "")
+            alert("Campo vazio.");
+        else if (isNaN(value))
+            alert("O valor não é um número.");
+        else if (parseFloat(value.replace(",", ".")) <= 0)
+            alert("Digite um valor maior que zero.");
+        else if (parseFloat(value.replace(",", ".")) - parseInt(value) != 0 && option)
+            alert("Digite um número inteiro.");
+    }
+
+    /**
+     * Verifica se o número é positivo.
+     * @param {number} num valor numérico.
+     * @returns {boolean} retorna true caso seja positivo e false caso seja negativo
+     */
+    function isPositivoNumber(num){
+        if (num > 0)
+            return true;
+        alert("O valor não é um número positivo.");
+        return false;
+    }
+
+    //====================Variáveis====================
+
+    const gasPrices = []; //Array para pegar o menor número.
+    let avgConsume = 0; //Média de consumo.
+    let totalValues = 0; //Soma dos valores dos postos pesquisados.
+    let valueGasStation = 0 //Preço de cada posto.
+    let traveledDistance = 0; //Distância percorrida.
+    let quantityGasStation = 0; //Quantidade de posto.
+    let minimumCostGasStation = 0; //Valor mínimo.
+    let averageGasStationPrice = 0; //Média de preço.
+
+    //Entrada e validação da distância percorrida
+    alert("Bem-vindo ao desafio.")
+    while(true){
+        traveledDistance = inputValue("Qual a distância percorrida da sua casa até seu trabalho (em km)");
+        if(isPositivoNumber(traveledDistance)){
+            //Entrada e validação do consumo médio
+            while(true){
+                avgConsume = inputValue("Qual o consumo médio do seu veículo (em km/L)");
+                if(isPositivoNumber(avgConsume))
+                    break;
+            }
+            break;
+        }
+    }
+
+    //Calculo para saber consumo de gasolina por litros
+    const fuelConsumption = traveledDistance/avgConsume; 
+
+    //Quantidade de posto de combustível pesquisada
+    while(true){
+        quantityGasStation = inputValue("Em quantos postos de gasolina você pesquisou?", false);
+        if (isPositivoNumber(quantityGasStation))
+            break;
+    }
+
+    //Capturando os preços pesquisados
+    for(let i = 0; i < quantityGasStation; i++){
+        while(true){
+            valueGasStation = inputValue(`Digite o valor encontrado (em R$) no posto ${i+1}`);
+            if (isPositivoNumber(valueGasStation))
+                break;
+        }
+
+        //Atribuindo o valor na array
+        gasPrices[i] = valueGasStation;
+
+        //Soma dos valores
+        totalValues += valueGasStation;
+    }
+
+    //Ordenando os valores da array
+    gasPrices.sort()
+
+    //Pegando o menor valor dentro da array
+    minimumCostGasStation = parseFloat(gasPrices[0]);
+
+    //Calcula a média de valores dos postos pesquisado
+    averageGasStationPrice = totalValues/quantityGasStation;
+
+    //Calculo de gasto diário
+    const dayCost = 2*(fuelConsumption*minimumCostGasStation);
+
+    //Escrevendo no HTML    
+    writeLine(`O consumo necessário é ${fuelConsumption.toFixed(2)} litros`);
+    writeLine(`O menor valor pesquisado é ${minimumCostGasStation.toLocaleString("pt-br", {style: "currency", currency:"BRL"})}`);
+    writeLine(`A média dos valores pesquisado é ${averageGasStationPrice.toLocaleString("pt-br", {style: "currency", currency:"BRL"})}`);
+    writeLine(`O gasto diário (ida e volta) é ${dayCost.toLocaleString("pt-br", {style: "currency", currency:"BRL"})}`)
+    </script>
+</body>
+</html>
