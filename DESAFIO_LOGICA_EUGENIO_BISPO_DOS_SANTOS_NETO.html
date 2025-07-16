@@ -134,7 +134,7 @@
     }
 
     //Ordenando os valores da array
-    gasPrices.sort()
+    gasPrices.sort(((a, b) => a - b))
 
     //Pegando o menor valor dentro da array
     minimumCostGasStation = parseFloat(gasPrices[0]);
